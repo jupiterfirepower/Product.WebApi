@@ -12,6 +12,12 @@ using Microsoft.AspNetCore.ResponseCompression;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using WebApiContrib.Core.Formatter.Bson;
+using WebApiContrib.Core.Formatter.MessagePack;
+using WebApiContrib.Core.Formatter.Protobuf;
+using WebApiContrib.Core.Formatter.Yaml;
+using WebApiContrib.Core.Formatter.Csv;
+using WebApiContrib.Core.Formatter.PlainText;
 
 namespace Product.WebApi
 {
@@ -43,9 +49,17 @@ namespace Product.WebApi
                 });
 
             // Add framework services.
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
-                .AddJsonOptions(a => a.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver()); 
-            
+            services.AddMvc()
+                .AddCsvSerializerFormatters()
+                .AddPlainTextFormatters()
+                .AddBsonSerializerFormatters()
+                .AddProtobufFormatters()
+                .AddMessagePackFormatters()
+                .AddYamlFormatters()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+                .AddJsonOptions(a =>
+                    a.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver());
+
             services.AddDbContext<ProductsContext>(options =>
                 options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
 

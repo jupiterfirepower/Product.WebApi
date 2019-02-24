@@ -24,6 +24,14 @@
     <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
     <PackageReference Include="Serilog.Sinks.File" Version="4.0.0" />
     <PackageReference Include="Serilog.Sinks.RollingFile" Version="3.3.0" />
+    <PackageReference Include="WebApiContrib.Core" Version="2.2.0" />
+    <PackageReference Include="WebApiContrib.Core.Formatter.Bson" Version="2.1.0" />
+    <PackageReference Include="WebApiContrib.Core.Formatter.Csv" Version="3.0.0" />
+    <PackageReference Include="WebApiContrib.Core.Formatter.Jsonp" Version="2.1.0" />
+    <PackageReference Include="WebApiContrib.Core.Formatter.MessagePack" Version="2.1.0" />
+    <PackageReference Include="WebApiContrib.Core.Formatter.PlainText" Version="2.1.0" />
+    <PackageReference Include="WebApiContrib.Core.Formatter.Protobuf" Version="2.1.0" />
+    <PackageReference Include="WebApiContrib.Core.Formatter.Yaml" Version="2.1.0" />
   </ItemGroup>
 
   <ItemGroup>
