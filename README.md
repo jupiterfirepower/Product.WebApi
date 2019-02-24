@@ -30,3 +30,30 @@ dotnet add package Microsoft.Extensions.Configuration</br>
 </br>
 dotnet add package System.IdentityModel.Tokens.Jwt</br>
 dotnet add package Microsoft.AspNetCore.Authentication.JwtBearer</br>
+</br>
+install postman for testing or analog.</br>
+https://www.getpostman.com/downloads/</br>
+</br>
+postman</br>
+</br> 
+POST  https://localhost:44338/api/token </br>
+Set Headers </br>
+Content-Type application/json </br>
+Set Body</br>
+{</br>
+  "username": "sysusr",</br>
+  "password": "syspasswd"</br>
+}</br>
+Click Send button</br>
+</br>
+You get like this in Response</br>
+{</br>
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzeXN1c3IiLCJlbWFpbCI6InN5c3VzckBuZXQudWEiLCJqdGkiOiIxZTNkNGEwMi02NjJlLTQzMWItOWMxYi1mYTUzNGFhNzBkZTUiLCJleHAiOjE1NTEwMjU0NzAsImlzcyI6InByb2R1Y3R3ZWJhcGkubmV0IiwiYXVkIjoicHJvZHVjdHdlYmFwaS5uZXQifQ.LNlll0ePSbvO-QXUHxmH1U6izBdYQ_B1aiUiBtGDtZg"</br>
+}</br>
+</br>
+</br>
+GET https://localhost:44338/api/products</br>
+Set Headers (Authorization Bearer {token})</br>
+Authorization Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzeXN1c3IiLCJlbWFpbCI6InN5c3VzckBuZXQudWEiLCJqdGkiOiIxZTNkNGEwMi02NjJlLTQzMWItOWMxYi1mYTUzNGFhNzBkZTUiLCJleHAiOjE1NTEwMjU0NzAsImlzcyI6InByb2R1Y3R3ZWJhcGkubmV0IiwiYXVkIjoicHJvZHVjdHdlYmFwaS5uZXQifQ.LNlll0ePSbvO-QXUHxmH1U6izBdYQ_B1aiUiBtGDtZg</br>
+</br>
+Click Send button and you get in Response lis of products as json array.</br>
