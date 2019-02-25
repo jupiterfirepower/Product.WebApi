@@ -1,4 +1,4 @@
-"# Product.WebApi" </br>
+"# Product.WebApi .net core 2.2 C# EntityFramework Code First SQLite Json Web Token(JWT) UnitOfWork Repository" </br>
 .net cli commands</br>
 </br>
 dotnet new sln -n ProductWebApi.sln
@@ -60,3 +60,4 @@ Set Headers (Authorization Bearer {token})</br>
 Authorization Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzeXN1c3IiLCJlbWFpbCI6InN5c3VzckBuZXQudWEiLCJqdGkiOiIxZTNkNGEwMi02NjJlLTQzMWItOWMxYi1mYTUzNGFhNzBkZTUiLCJleHAiOjE1NTEwMjU0NzAsImlzcyI6InByb2R1Y3R3ZWJhcGkubmV0IiwiYXVkIjoicHJvZHVjdHdlYmFwaS5uZXQifQ.LNlll0ePSbvO-QXUHxmH1U6izBdYQ_B1aiUiBtGDtZg</br>
 </br>
 Click Send button and you get in Response lis of products as json array.</br>
+![Alt text](Images/PostmanGetProductsHeader.png?raw=true "Postman Get Products Header")
