@@ -52,6 +52,16 @@ namespace Product.WebApi.Tests
             Assert.True(data.Count() > 0);
         }
 
+        [Fact]
+        public void GetCategories_WhenCalled_MustReturnNotEmpty()
+        {
+            var data = _service.GetCategories();
+            var first = data.FirstOrDefault();
+            Assert.NotNull(data);
+            Assert.True(data.Count() > 0);
+            Assert.True(first.Children.Count() > 0);
+        }
+
         // Service.GetAll method test
         [Fact]
         public async void Find_WhenCalled_MustReturnNotEmpty()

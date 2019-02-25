@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Product.WebApi.Repository;
 using Product.WebApi.DataAccess;
+using System.Linq;
 
 namespace Product.WebApi.Services
 {
@@ -31,6 +32,15 @@ namespace Product.WebApi.Services
         public async Task<IEnumerable<Models.User>> GetUsers()
         {
             return await _userRepository.GetAll().ToListAsync();
+        }
+
+        public IEnumerable<Models.Category> GetCategories()
+        {
+            return _uow.Context.Categories
+                .Include(x => x.Children)
+                .AsEnumerable()
+                .Where(x => x.Parent == null)
+                .ToList();
         }
 
         public async Task<Models.Product> Find(int id)
