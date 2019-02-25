@@ -51,7 +51,9 @@ You get like this in Response</br>
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzeXN1c3IiLCJlbWFpbCI6InN5c3VzckBuZXQudWEiLCJqdGkiOiIxZTNkNGEwMi02NjJlLTQzMWItOWMxYi1mYTUzNGFhNzBkZTUiLCJleHAiOjE1NTEwMjU0NzAsImlzcyI6InByb2R1Y3R3ZWJhcGkubmV0IiwiYXVkIjoicHJvZHVjdHdlYmFwaS5uZXQifQ.LNlll0ePSbvO-QXUHxmH1U6izBdYQ_B1aiUiBtGDtZg"</br>
 }</br>
 </br>
-![Alt text](Images/PostmangGetHeader.png?raw=true "Postman Header")
+![Alt text](Images/PostmanGetHeader.png?raw=true "Postman Header")
+</br>
+![Alt text](Images/PostmanGetBody.png?raw=true "Postman Body")
 </br>
 GET https://localhost:44338/api/products</br>
 Set Headers (Authorization Bearer {token})</br>
