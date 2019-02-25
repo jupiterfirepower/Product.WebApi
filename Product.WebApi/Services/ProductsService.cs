@@ -9,18 +9,19 @@ namespace Product.WebApi.Services
     public class ProductsService : IProductsService
     {
         private readonly IUnitOfWork<ProductsContext> _uow;
-        private readonly IRepository<Models.Product,ProductsContext> _repo;
+        private readonly IRepository<Models.Product,ProductsContext> _productRepository;
+        private readonly IRepository<Models.User, ProductsContext> _userRepository;
 
-
-        public ProductsService(IUnitOfWork<ProductsContext> unit, IRepository<Models.Product, ProductsContext> repo)
+        public ProductsService(IUnitOfWork<ProductsContext> unit, IRepository<Models.Product, ProductsContext> productRepository, IRepository<Models.User, ProductsContext> userRepository)
         {
             _uow = unit;
-            _repo = repo;
+            _productRepository = productRepository;
+            _userRepository = userRepository;
         }
 
         public async Task<IEnumerable<Models.Product>> GetAll()
         {
-            return await _repo.GetAll()
+            return await _productRepository.GetAll()
                 .Include(p => p.Owner)
                 .Include(p => p.Producer)
                 .Include(p => p.Category)
@@ -29,12 +30,12 @@ namespace Product.WebApi.Services
 
         public async Task<IEnumerable<Models.User>> GetUsers()
         {
-            return await _uow.Context.Users.ToListAsync();
+            return await _userRepository.GetAll().ToListAsync();
         }
 
         public async Task<Models.Product> Find(int id)
         {
-            return await _repo.Get(x=>x.ProductId==id)
+            return await _productRepository.Get(x=>x.ProductId==id)
                 .Include(p => p.Owner)
                 .Include(p => p.Producer)
                 .Include(p => p.Category)
@@ -56,8 +57,8 @@ namespace Product.WebApi.Services
         {
             ChangeRelation(ref item);
 
-            item.ProductId = 0; //always new
-            await _repo.Create(item);
+            item.ProductId = 0; //always new ignore original ProductId from product entity
+            await _productRepository.Create(item);
             await _uow.CommitAsync();
         }
 
@@ -69,7 +70,7 @@ namespace Product.WebApi.Services
         public async Task Remove(int id)
         {
             var current = await Find(id);
-            if(current != null) await _repo.Remove(current.ProductId);
+            if(current != null) await _productRepository.Remove(current.ProductId);
             await _uow.CommitAsync();
         }
 
@@ -77,7 +78,7 @@ namespace Product.WebApi.Services
         {
             ChangeRelation(ref item);
 
-            await _repo.Change(item.ProductId, item);
+            await _productRepository.Change(item.ProductId, item);
             await _uow.CommitAsync();
         }
         

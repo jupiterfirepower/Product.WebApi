@@ -82,7 +82,8 @@ namespace Product.WebApi.Tests
             Assert.NotNull(data);
             Assert.True(data.Count() > 0);
         }
-// Getl tests         
+
+        // Getl tests         
         // Repository.Get method test
         [Fact]
         public void Get_WhenCalled_MustReturnNotEmpty()

@@ -20,7 +20,7 @@ namespace Product.WebApi.Tests
         {
             var context = new ProductsContext();
             var ufw = new UnitOfWork<ProductsContext>(context);
-            _service = new ProductsService(ufw, new Repository<Models.Product, ProductsContext>(ufw));
+            _service = new ProductsService(ufw, new Repository<Models.Product, ProductsContext>(ufw), new Repository<Models.User, ProductsContext>(ufw));
             _controller = new ProductsController(_service);
         }
 

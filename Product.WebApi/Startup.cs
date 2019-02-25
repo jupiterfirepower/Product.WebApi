@@ -69,6 +69,7 @@ namespace Product.WebApi
             services.AddTransient<IRepository<Models.Product, ProductsContext>, Repository<Models.Product, ProductsContext>>();
             services.AddTransient<IRepository<Models.ProductOwner, ProductsContext>, Repository<Models.ProductOwner, ProductsContext>>();
             services.AddTransient<IRepository<Models.Manufacturer, ProductsContext>, Repository<Models.Manufacturer, ProductsContext>>();
+            services.AddTransient<IRepository<Models.User, ProductsContext>, Repository<Models.User, ProductsContext>>();
             //services.AddSingleton<IProductsService, ProductsService>();
             services.AddScoped<IProductsService, ProductsService>();
 

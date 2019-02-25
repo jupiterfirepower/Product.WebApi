@@ -15,7 +15,7 @@ namespace Product.WebApi.Tests
         {
             var context = new ProductsContext();
             _ufw = new UnitOfWork<ProductsContext>(context);
-            _service = new ProductsService(_ufw, new Repository<Models.Product, ProductsContext>(_ufw));
+            _service = new ProductsService(_ufw, new Repository<Models.Product, ProductsContext>(_ufw), new Repository<Models.User, ProductsContext>(_ufw));
         }
 
         // Service.Update method test
@@ -39,6 +39,15 @@ namespace Product.WebApi.Tests
         public async void GetAll_WhenCalled_MustReturnNotEmpty()
         {
             var data = await _service.GetAll();
+            Assert.NotNull(data);
+            Assert.True(data.Count() > 0);
+        }
+
+        // Service.GetUsers method test
+        [Fact]
+        public async void GetUsers_WhenCalled_MustReturnNotEmpty()
+        {
+            var data = await _service.GetUsers();
             Assert.NotNull(data);
             Assert.True(data.Count() > 0);
         }
