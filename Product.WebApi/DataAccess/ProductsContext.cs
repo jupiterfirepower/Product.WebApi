@@ -2,6 +2,8 @@
 using Product.WebApi.Models;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using WebApiContrib.Core;
 
 namespace Product.WebApi.DataAccess
 {
@@ -26,12 +28,24 @@ namespace Product.WebApi.DataAccess
                 .ValueGeneratedOnAdd();
 
             modelBuilder.Entity<Models.Product>()
+                .Property(p => p.RowVersion)
+                .IsFixedLength()
+                .HasMaxLength(8)
+                .ValueGeneratedOnAddOrUpdate()
+                .IsConcurrencyToken();
+
+            modelBuilder.Entity<Models.Product>()
                 .Property(e => e.ProductName)
                 .HasMaxLength(150);
 
             modelBuilder.Entity<Models.Product>()
                 .Property(e => e.Description)
                 .HasMaxLength(250);
+
+            // configures one-to-many relationship
+            modelBuilder.Entity<Models.Product>()
+                .HasOne(e => e.Category)
+                .WithMany(c => c.Products);
 
             modelBuilder.Entity<ProductOwner>()
                 .HasKey(p => p.OwnerId);

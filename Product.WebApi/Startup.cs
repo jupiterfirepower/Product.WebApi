@@ -18,6 +18,7 @@ using WebApiContrib.Core.Formatter.Protobuf;
 using WebApiContrib.Core.Formatter.Yaml;
 using WebApiContrib.Core.Formatter.Csv;
 using WebApiContrib.Core.Formatter.PlainText;
+using Microsoft.Extensions.Logging;
 
 namespace Product.WebApi
 {
@@ -60,8 +61,12 @@ namespace Product.WebApi
                 .AddJsonOptions(a =>
                     a.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver());
 
+            var logFactory = new LoggerFactory();
+            logFactory.AddProvider(new SqliteLoggerProvider());
+
             services.AddDbContext<ProductsContext>(options =>
-                options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlite(Configuration.GetConnectionString("DefaultConnection"))
+                    .UseLoggerFactory(logFactory));
 
             //using Dependency Injection
             services.AddScoped<ProductsContext, ProductsContext>();

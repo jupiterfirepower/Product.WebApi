@@ -76,6 +76,9 @@
 
         [Required]
         public int ManufacturerId { get; set; }
+
+        [Timestamp]
+        public byte[] RowVersion { get; set; }
     }
 
     [Table("Users")]
@@ -129,5 +132,7 @@
         public virtual Category Parent { get; set; }
 
         public virtual ICollection<Category> Children { get; set; }
+
+        public virtual ICollection<Product> Products { get; set; }
     }
 }

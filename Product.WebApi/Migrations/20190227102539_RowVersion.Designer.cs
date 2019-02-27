@@ -9,8 +9,8 @@ using Product.WebApi.DataAccess;
 namespace Product.WebApi.Migrations
 {
     [DbContext(typeof(ProductsContext))]
-    [Migration("20190224132631_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20190227102539_RowVersion")]
+    partial class RowVersion
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -79,6 +79,10 @@ namespace Product.WebApi.Migrations
                         .IsRequired()
                         .HasColumnType("ProductName")
                         .HasMaxLength(150);
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate();
 
                     b.HasKey("ProductId");
 
@@ -161,7 +165,7 @@ namespace Product.WebApi.Migrations
             modelBuilder.Entity("Product.WebApi.Models.Product", b =>
                 {
                     b.HasOne("Product.WebApi.Models.Category", "Category")
-                        .WithMany()
+                        .WithMany("Products")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade);
 

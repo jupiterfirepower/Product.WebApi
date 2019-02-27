@@ -1,8 +1,11 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Xunit;
 using Product.WebApi.Repository;
 using Product.WebApi.DataAccess;
 using Product.WebApi.Services;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Product.WebApi.Tests
 {
@@ -95,6 +98,44 @@ namespace Product.WebApi.Tests
             // Assert
             Assert.NotNull(item);
             Assert.True(item.ProductName == "product added");
+        }
+
+
+        [Fact]
+        public void UpdateDifDBContext_WhenCalled_ExpectDbUpdateConcurrencyException()
+        {
+            var logFactory = new LoggerFactory();
+            logFactory.AddProvider(new SqliteLoggerProvider());
+
+
+            var context1 = new ProductsContext(new DbContextOptionsBuilder<ProductsContext>()
+                .UseSqlite("Data Source=products.db").UseLoggerFactory(logFactory).Options);
+            var context2 = new ProductsContext(new DbContextOptionsBuilder<ProductsContext>()
+                .UseSqlite("Data Source=products.db").UseLoggerFactory(logFactory).Options);
+
+            context1.Database.ExecuteSqlCommand(
+                @"UPDATE Products SET RowVersion = randomblob(8) WHERE RowVersion = null");
+
+            var productFromContext1 = context1.Products.AsNoTracking().FirstOrDefault(p => p.ProductId == 1);
+            var productFromContext2 = context1.Products.AsNoTracking().FirstOrDefault(p => p.ProductId == 1);
+
+            productFromContext1.Description = DateTime.Now.ToString();
+            productFromContext2.Description = DateTime.UtcNow.ToString();
+
+            try
+            {
+                context1.Entry(productFromContext1).State = EntityState.Modified;
+                var count = context1.SaveChanges();
+                productFromContext1 = context1.Products.FirstOrDefault(p => p.ProductId == 1);
+                context2.Entry(productFromContext2).State = EntityState.Modified;
+                count = context2.SaveChanges();
+                Assert.True(false);
+            }
+            catch (DbUpdateConcurrencyException e)
+            {
+                Assert.True(true);
+            }
+            
         }
     }
 }

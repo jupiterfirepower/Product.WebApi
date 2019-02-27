@@ -5,6 +5,7 @@ using Product.WebApi.Extentions;
 using System;
 using Serilog;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 
 namespace Product.WebApi.Controllers
 {
@@ -128,6 +129,10 @@ namespace Product.WebApi.Controllers
 
                 //return NoContent();
                 return Ok();
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                return Conflict(ex);
             }
             catch (Exception ex)
             {
