@@ -46,6 +46,7 @@ namespace Product.WebApi.DataAccess
             modelBuilder.Entity<Models.Product>()
                 .HasOne(e => e.Category)
                 .WithMany(c => c.Products);
+                //.OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<ProductOwner>()
                 .HasKey(p => p.OwnerId);

@@ -36,23 +36,6 @@ namespace Product.WebApi.Controllers
             }
         }
 
-        // GET api/products
-        [HttpGet]
-        [Route("products/all")]
-        public async Task<IActionResult> GetProductsAll()
-        {
-            try
-            {
-                var contactList = await _service.GetAll();
-                return Ok(contactList);
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, $"{GetType().Name}.{System.Reflection.MethodBase.GetCurrentMethod().Name} exception");
-                return StatusCode(500, "Internal server error");
-            }
-        }
-
         // GET api/products/id
         [HttpGet("{id}", Name = "GetProduct"), Authorize]
         public async Task<IActionResult> GetById(int id)
