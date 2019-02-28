@@ -6,6 +6,8 @@ using Product.WebApi.DataAccess;
 using Product.WebApi.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using AutoMapper;
+using Product.WebApi.Mappings;
 
 namespace Product.WebApi.Tests
 {
@@ -18,6 +20,13 @@ namespace Product.WebApi.Tests
         {
             var context = new ProductsContext();
             _ufw = new UnitOfWork<ProductsContext>(context);
+            // Auto Mapper Configurations
+            var mappingConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new MappingProfile());
+            });
+
+            IMapper mapper = mappingConfig.CreateMapper();
             _service = new ProductsService(_ufw, new Repository<Models.Product, ProductsContext>(_ufw), new Repository<Models.User, ProductsContext>(_ufw));
         }
 
@@ -56,9 +65,9 @@ namespace Product.WebApi.Tests
         }
 
         [Fact]
-        public void GetCategories_WhenCalled_MustReturnNotEmpty()
+        public async void GetCategories_WhenCalled_MustReturnNotEmpty()
         {
-            var data = _service.GetCategories();
+            var data = await _service.GetCategories();
             var first = data.FirstOrDefault();
             Assert.NotNull(data);
             Assert.True(data.Count() > 0);

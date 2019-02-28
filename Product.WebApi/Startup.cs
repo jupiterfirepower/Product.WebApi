@@ -19,6 +19,9 @@ using WebApiContrib.Core.Formatter.Yaml;
 using WebApiContrib.Core.Formatter.Csv;
 using WebApiContrib.Core.Formatter.PlainText;
 using Microsoft.Extensions.Logging;
+using Swashbuckle.AspNetCore.Swagger;
+using AutoMapper;
+using Product.WebApi.Mappings;
 
 namespace Product.WebApi
 {
@@ -68,6 +71,11 @@ namespace Product.WebApi
                 options.UseSqlite(Configuration.GetConnectionString("DefaultConnection"))
                     .UseLoggerFactory(logFactory));
 
+            // Start Registering and Initializing AutoMapper
+
+            Mapper.Initialize(cfg => cfg.AddProfile<MappingProfile>());
+            services.AddAutoMapper();
+
             //using Dependency Injection
             services.AddScoped<ProductsContext, ProductsContext>();
             services.AddTransient<IUnitOfWork<ProductsContext>, UnitOfWork<ProductsContext>>();
@@ -97,6 +105,10 @@ namespace Product.WebApi
                 };*/
                 options.EnableForHttps = true;
             });
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info { Title = "Priduct Web API", Version = "v1" });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -111,6 +123,16 @@ namespace Product.WebApi
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            // Enable middleware to serve generated Swagger as a JSON endpoint.
+            app.UseSwagger();
+
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), specifying the Swagger JSON endpoint.
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Product API V1");
+            });
+
             app.UseResponseCompression();
             app.UseHttpsRedirection();
             app.UseAuthentication();

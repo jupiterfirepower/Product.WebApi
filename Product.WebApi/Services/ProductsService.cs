@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Product.WebApi.Repository;
 using Product.WebApi.DataAccess;
 using System.Linq;
+using AutoMapper;
+using Product.WebApi.Models;
 
 namespace Product.WebApi.Services
 {
@@ -34,14 +36,26 @@ namespace Product.WebApi.Services
             return await _userRepository.GetAll().ToListAsync();
         }
 
-        public IEnumerable<Models.Category> GetCategories()
+        public async Task<IEnumerable<Category>> GetCategories()
         {
-            return _uow.Context.Categories
+            return await _uow.Context.Categories
+                .Include(x => x.Children)
+                .AsEnumerable()
+                .Where(x => x.Parent == null)
+                .AsQueryable()
+                .ToListAsync();
+        }
+
+        /*public IEnumerable<CategoryDto> GetCategories()
+        {
+            var categories = _uow.Context.Categories
                 .Include(x => x.Children)
                 .AsEnumerable()
                 .Where(x => x.Parent == null)
                 .ToList();
-        }
+
+            return _mapper.Map<IEnumerable<Category>, IList<CategoryDto>>(categories);
+        }*/
 
         public async Task<Models.Product> Find(int id)
         {

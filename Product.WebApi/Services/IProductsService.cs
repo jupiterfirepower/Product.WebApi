@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Product.WebApi.Models;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Product.WebApi.Services
@@ -8,7 +9,7 @@ namespace Product.WebApi.Services
         Task Add(Models.Product item);
         Task<IEnumerable<Models.Product>> GetAll();
         Task<IEnumerable<Models.User>> GetUsers();
-        IEnumerable<Models.Category> GetCategories();
+        Task<IEnumerable<Category>> GetCategories();
         Task<Models.Product> Find(int key);
         Task Remove(int Id);
         Task Update(Models.Product item);

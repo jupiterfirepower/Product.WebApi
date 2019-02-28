@@ -6,6 +6,9 @@ using System;
 using Serilog;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
+using AutoMapper;
+using System.Collections.Generic;
 
 namespace Product.WebApi.Controllers
 {
@@ -14,10 +17,12 @@ namespace Product.WebApi.Controllers
     public class ProductsController : ControllerBase
     {
         private IProductsService _service { get; set; }
+        private readonly IMapper _mapper;
 
-        public ProductsController(IProductsService service)
+        public ProductsController(IProductsService service, IMapper mapper)
         {
             _service = service;
+            _mapper = mapper;
         }
 
         // GET api/products
@@ -26,8 +31,9 @@ namespace Product.WebApi.Controllers
         {
             try
             {
-                var contactList = await _service.GetAll();
-                return Ok(contactList);
+                var productList = await _service.GetAll();
+                var result = _mapper.Map<IEnumerable<Models.Product>, IEnumerable<Models.ProductDto>>(productList);
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -37,8 +43,9 @@ namespace Product.WebApi.Controllers
         }
 
         // GET api/products/id
-        [HttpGet("{id}", Name = "GetProduct"), Authorize]
-        public async Task<IActionResult> GetById(int id)
+        //[HttpGet("{id}", Name = "GetProduct"), Authorize]
+        [HttpGet("{id:int:min(1)}", Name = "GetProduct"), Authorize]
+        public async Task<IActionResult> GetById([Required]int id)
         {
             try
             {
@@ -48,8 +55,9 @@ namespace Product.WebApi.Controllers
                 {
                     return NotFound();
                 }
+                var result = _mapper.Map<Models.ProductDto>(item);
 
-                return Ok(item);
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -60,7 +68,7 @@ namespace Product.WebApi.Controllers
 
         // CREATE api/products POST
         [HttpPost, Authorize]
-        public async Task<IActionResult> Create([FromBody] Models.Product item)
+        public async Task<IActionResult> Create([FromBody] Models.ProductDto item)
         {
             try
             {
@@ -74,7 +82,9 @@ namespace Product.WebApi.Controllers
                     return BadRequest("Invalid product object sent from client.");
                 }
 
-                await _service.Add(item);
+                var currentItem = _mapper.Map<Models.Product>(item);
+
+                await _service.Add(currentItem);
 
                 return CreatedAtRoute("GetProduct", new { Controller = "Products", id = item.ProductId }, item);
             }
@@ -87,7 +97,7 @@ namespace Product.WebApi.Controllers
 
         // UPDATE api/products/5 PUT
         [HttpPut("{id}"), Authorize]
-        public async Task<IActionResult> Update(int id, [FromBody] Models.Product item)
+        public async Task<IActionResult> Update(int id, [FromBody] Models.ProductDto item)
         {
             try
             {
@@ -108,7 +118,9 @@ namespace Product.WebApi.Controllers
                     return NotFound();
                 }
 
-                await _service.Update(item);
+                var currentItem = _mapper.Map<Models.Product>(item);
+
+                await _service.Update(currentItem);
 
                 //return NoContent();
                 return Ok();

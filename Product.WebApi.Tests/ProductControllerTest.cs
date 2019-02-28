@@ -8,6 +8,8 @@ using Product.WebApi.DataAccess;
 using Product.WebApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using Product.WebApi.Services;
+using AutoMapper;
+using Product.WebApi.Mappings;
 
 namespace Product.WebApi.Tests
 {
@@ -20,8 +22,15 @@ namespace Product.WebApi.Tests
         {
             var context = new ProductsContext();
             var ufw = new UnitOfWork<ProductsContext>(context);
+            // Auto Mapper Configurations
+            var mappingConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new MappingProfile());
+            });
+
+            IMapper mapper = mappingConfig.CreateMapper();
             _service = new ProductsService(ufw, new Repository<Models.Product, ProductsContext>(ufw), new Repository<Models.User, ProductsContext>(ufw));
-            _controller = new ProductsController(_service);
+            _controller = new ProductsController(_service, mapper);
         }
 
         // GetAll tests
@@ -42,7 +51,7 @@ namespace Product.WebApi.Tests
             var okResult = _controller.GetAll().Result as OkObjectResult;
 
             // Assert
-            var items = Assert.IsType<List<Models.Product>>(okResult.Value);
+            var items = Assert.IsType<List<Models.ProductDto>>(okResult.Value);
             Assert.True(items.Count > 0);
         }
 
@@ -74,35 +83,37 @@ namespace Product.WebApi.Tests
             var okResult = _controller.GetById(1).Result as OkObjectResult;
 
             // Assert
-            Assert.IsType<Models.Product>(okResult.Value);
-            Assert.Equal(1, (okResult.Value as Models.Product).ProductId);
+            Assert.IsType<Models.ProductDto>(okResult.Value);
+            Assert.Equal(1, (okResult.Value as Models.ProductDto).ProductId);
         }
 
         // Add tests - POST
         [Fact]
         public void Add_InvalidObjectPassed_ReturnsBadRequest()
         {
-            var owner1 = new ProductOwner
+            var owner1 = new ProductOwnerDto
             {
                 OwnerId = 1, OwnerName = "owner 1", Address = "owner address 1", Email = "owner1@owners.net",
                 Phone = "213421412341"
             };
 
-            var producer = new Manufacturer()
-                {ManufacturerId = 1, ManufactureName = "Manufacturer 1", Address = "Manufacturer address 1"};
+            var producer = new ProducerDto()
+                { ProducerId = 1, ProducerName = "Manufacturer 1", ProducerAddress = "Manufacturer address 1"};
 
-            var category = new Category()
+            var category = new CategoryDto()
                 { CategoryId = 1, Name = "Category 1", Description = "Category 1", Parent = null, ParentId = null };
 
-            var product = new Models.Product()
+            var product = new Models.ProductDto()
             {
-                ProductId = 1, ProductName = "product name test", Description = "product test description",
+                ProductId = 1,
+                ProductName = "product name test",
+                Description = "product test description",
                 Price = 231.33424m,
                 Owner = owner1,
                 Producer = producer,
-                Category = category
+                Category = category,
+                RowVersion = null
             };
-
 
             _controller.ModelState.AddModelError("ProductName", "Required");
             // Act
@@ -117,19 +128,19 @@ namespace Product.WebApi.Tests
         public void Add_ValidObjectPassed_ReturnsCreatedResponse()
         {
             // Arrange
-            var owner1 = new ProductOwner
+            var owner1 = new ProductOwnerDto
             {
                 OwnerId = 1, OwnerName = "owner 1", Address = "owner address 1", Email = "owner1@owners.net",
                 Phone = "213421412341"
             };
 
-            var producer = new Manufacturer()
-                {ManufacturerId = 1, ManufactureName = "Manufacturer 1", Address = "Manufacturer address 1"};
+            var producer = new ProducerDto()
+                { ProducerId = 1, ProducerName = "Manufacturer 1", ProducerAddress = "Manufacturer address 1" };
 
-            var category = new Category()
+            var category = new CategoryDto()
                 { CategoryId = 1, Name = "Category 1", Description = "Category 1", Parent = null, ParentId = null };
 
-            var product = new Models.Product()
+            var product = new Models.ProductDto()
             {
                 ProductId = 7, ProductName = "product name test", Description = "product test description",
                 Price = 231.33424m,
@@ -150,7 +161,7 @@ namespace Product.WebApi.Tests
         public void Add_ValidObjectPassed_ReturnedResponseHasCreatedItem()
         {
             // Arrange
-            var owner1 = new ProductOwner
+            var owner1 = new ProductOwnerDto
             {
                 OwnerId = 1,
                 OwnerName = "owner 1",
@@ -159,13 +170,13 @@ namespace Product.WebApi.Tests
                 Phone = "213421412341"
             };
 
-            var producer = new Manufacturer()
-                { ManufacturerId = 1, ManufactureName = "Manufacturer 1", Address = "Manufacturer address 1" };
+            var producer = new ProducerDto()
+                { ProducerId = 1, ProducerName = "Manufacturer 1", ProducerAddress = "Manufacturer address 1" };
 
-            var category = new Category()
-                { CategoryId = 1, Name = "Category 1", Description = "Category 1", Parent = null, ParentId = null, Children = null};
+            var category = new CategoryDto()
+                { CategoryId = 1, Name = "Category 1", Description = "Category 1", Parent = null, ParentId = null };
 
-            var product = new Models.Product()
+            var product = new Models.ProductDto()
             {
                 ProductId = 7,
                 ProductName = "product name test special",
@@ -186,17 +197,17 @@ namespace Product.WebApi.Tests
             // Act
             var t = _controller.Create(product).Result;
             var createdResponse = _controller.Create(product).Result as CreatedAtRouteResult;
-            var item = createdResponse.Value as Models.Product;
+            var item = createdResponse.Value as Models.ProductDto;
 
             // Assert
-            Assert.IsType<Models.Product>(item);
+            Assert.IsType<Models.ProductDto>(item);
             Assert.Equal("product name test special", item.ProductName);
         }
 
         [Fact]
         public void Update_InvalidObjectPassed_ReturnsNotFoundRequest()
         {
-            var owner1 = new Models.ProductOwner
+            var owner1 = new Models.ProductOwnerDto
             {
                 OwnerId = 1,
                 OwnerName = "owner 1",
@@ -205,10 +216,10 @@ namespace Product.WebApi.Tests
                 Phone = "213421412341"
             };
 
-            var producer = new Models.Manufacturer()
-                { ManufacturerId = 1, ManufactureName = "Manufacturer 1", Address = "Manufacturer address 1" };
+            var producer = new ProducerDto()
+                { ProducerId = 1, ProducerName = "Manufacturer 1", ProducerAddress = "Manufacturer address 1" };
 
-            var product = new Models.Product()
+            var product = new Models.ProductDto()
             {
                 ProductId = 9,
                 ProductName = "product name updated",
@@ -228,7 +239,7 @@ namespace Product.WebApi.Tests
         [Fact]
         public void Update_InvalidObjectPassed_ReturnsBadRequest()
         {
-            var owner1 = new ProductOwner
+            var owner1 = new ProductOwnerDto
             {
                 OwnerId = 1,
                 OwnerName = "owner 1",
@@ -237,13 +248,13 @@ namespace Product.WebApi.Tests
                 Phone = "213421412341"
             };
 
-            var producer = new Manufacturer()
-                { ManufacturerId = 1, ManufactureName = "Manufacturer 1", Address = "Manufacturer address 1" };
+            var producer = new ProducerDto()
+                { ProducerId = 1, ProducerName = "Manufacturer 1", ProducerAddress = "Manufacturer address 1" };
 
-            var category = new Category()
+            var category = new CategoryDto()
                 { CategoryId = 1, Name = "Category 1", Description = "Category 1", Parent = null, ParentId = null };
 
-            var product = new Models.Product()
+            var product = new Models.ProductDto()
             {
                 ProductId = 9,
                 ProductName = "product name updated",
@@ -266,7 +277,7 @@ namespace Product.WebApi.Tests
         public void Update_ValidObjectPassed_ReturnedResponseOkResult()
         {
             // Arrange
-            var owner1 = new ProductOwner
+            var owner1 = new ProductOwnerDto
             {
                 OwnerId = 1,
                 OwnerName = "owner 1",
@@ -274,13 +285,13 @@ namespace Product.WebApi.Tests
                 Email = "owner1@owners.net",
                 Phone = "213421412341"
             };
-            var producer = new Manufacturer()
-                { ManufacturerId = 1, ManufactureName = "Manufacturer 1", Address = "Manufacturer address 1" };
+            var producer = new ProducerDto()
+                { ProducerId = 1, ProducerName = "Manufacturer 1", ProducerAddress = "Manufacturer address 1" };
 
-            var category = new Category()
-                { CategoryId = 1, Name = "Category 1", Description = "Category 1", Parent = null, ParentId = null};
+            var category = new CategoryDto()
+                { CategoryId = 1, Name = "Category 1", Description = "Category 1", Parent = null, ParentId = null };
 
-            var product = new Models.Product()
+            var product = new Models.ProductDto()
             {
                 ProductId = 2,
                 ProductName = "product name test special",
