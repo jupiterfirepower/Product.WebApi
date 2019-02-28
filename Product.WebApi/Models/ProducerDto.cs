@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Product.WebApi.Models
 {
@@ -9,8 +6,11 @@ namespace Product.WebApi.Models
     {
         public int ProducerId { get; set; }
 
+        [Required]
+        [StringLength(150)]
         public string ProducerName { get; set; }
-
+        [Required]
+        [StringLength(100)]
         public string ProducerAddress { get; set; }
     }
 }
