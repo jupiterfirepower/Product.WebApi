@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using AutoMapper;
 using System.Collections.Generic;
+using System.Net;
 
 namespace Product.WebApi.Controllers
 {
@@ -38,7 +39,7 @@ namespace Product.WebApi.Controllers
             catch (Exception ex)
             {
                 Log.Error(ex, $"{GetType().Name}.{System.Reflection.MethodBase.GetCurrentMethod().Name} exception");
-                return StatusCode(500, "Internal server error");
+                return StatusCode((int)HttpStatusCode.InternalServerError, "Internal server error");
             }
         }
 
@@ -62,7 +63,7 @@ namespace Product.WebApi.Controllers
             catch (Exception ex)
             {
                 Log.Error(ex, $"{GetType().Name}.{System.Reflection.MethodBase.GetCurrentMethod().Name} exception");
-                return StatusCode(500, "Internal server error");
+                return StatusCode((int)HttpStatusCode.InternalServerError, "Internal server error");
             }
         }
 
@@ -91,7 +92,7 @@ namespace Product.WebApi.Controllers
             catch (Exception ex)
             {
                 Log.Error(ex, $"{GetType().Name}.{System.Reflection.MethodBase.GetCurrentMethod().Name} exception");
-                return StatusCode(500, "Internal server error");
+                return StatusCode((int)HttpStatusCode.InternalServerError, "Internal server error");
             }
         }
 
@@ -132,7 +133,7 @@ namespace Product.WebApi.Controllers
             catch (Exception ex)
             {
                 Log.Error(ex, $"{GetType().Name}.{System.Reflection.MethodBase.GetCurrentMethod().Name} exception");
-                return StatusCode(500, "Internal server error");
+                return StatusCode((int)HttpStatusCode.InternalServerError, "Internal server error");
             }
             
         }
@@ -158,7 +159,7 @@ namespace Product.WebApi.Controllers
             catch (Exception ex)
             {
                 Log.Error(ex, $"{GetType().Name}.{System.Reflection.MethodBase.GetCurrentMethod().Name} exception");
-                return StatusCode(500, "Internal server error");
+                return StatusCode((int)HttpStatusCode.InternalServerError, "Internal server error");
             }
         }
     }

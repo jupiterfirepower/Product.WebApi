@@ -99,7 +99,7 @@
         public string Password { get; set; }
 
         [Required]
-        [StringLength(150)]
+        [StringLength(50)]
         [Column(TypeName = "UserEmail")]
         [EmailAddress(ErrorMessage = "The email format is not valid")]
         public string Email { get; set; }

@@ -68,6 +68,9 @@ namespace Product.WebApi.Mappings
                 .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.Category.CategoryId))
                 .ForMember(dest => dest.ManufacturerId, opt => opt.MapFrom(src => src.Producer.ProducerId))
                 .ForMember(dest => dest.OwnerId, opt => opt.MapFrom(src => src.Owner.OwnerId));
+
+            CreateMap<User, UserDto>();
+            CreateMap<UserDto, User>();
         }
     }
 }
