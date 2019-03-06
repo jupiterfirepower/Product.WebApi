@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using AutoMapper;
 using Product.WebApi.Mappings;
+using Product.WebApi.Models;
+using System.Collections.Generic;
 
 namespace Product.WebApi.Tests
 {
@@ -15,6 +17,7 @@ namespace Product.WebApi.Tests
     {
         private IProductsService _service;
         private IUnitOfWork<ProductsContext> _ufw;
+        private IMapper _mapper;
 
         public ServiceTest()
         {
@@ -27,6 +30,7 @@ namespace Product.WebApi.Tests
             });
 
             IMapper mapper = mappingConfig.CreateMapper();
+            _mapper = mapper;
             _service = new ProductsService(_ufw, new Repository<Models.Product, ProductsContext>(_ufw), new Repository<Models.User, ProductsContext>(_ufw));
         }
 
@@ -65,9 +69,20 @@ namespace Product.WebApi.Tests
         }
 
         [Fact]
-        public async void GetCategories_WhenCalled_MustReturnNotEmpty()
+        public void GetCategories_WhenCalled_MustReturnNotEmpty()
         {
-            var data = await _service.GetCategories();
+            var data = _service.GetCategories();
+            Assert.NotNull(data);
+            var first = data.FirstOrDefault();
+            Assert.True(data.Count() > 0);
+            Assert.True(first.Children.Count() > 0);
+        }
+
+        [Fact]
+        public void GetCategoriesMapping_WhenCalled_MustReturnNotEmpty()
+        {
+            var categories = _service.GetCategories();
+            var data = _mapper.Map<IEnumerable<Category>, IList<CategoryDto>>(categories);
             var first = data.FirstOrDefault();
             Assert.NotNull(data);
             Assert.True(data.Count() > 0);

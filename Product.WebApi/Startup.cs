@@ -22,6 +22,8 @@ using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Swagger;
 using AutoMapper;
 using Product.WebApi.Mappings;
+using Microsoft.AspNetCore.Rewrite;
+using Microsoft.AspNetCore.Http;
 
 namespace Product.WebApi
 {
@@ -51,6 +53,11 @@ namespace Product.WebApi
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
                     };
                 });
+
+            services.Configure<MvcOptions>(options =>
+            {
+                options.Filters.Add(new RequireHttpsAttribute());
+            });
 
             // Add framework services.
             services.AddMvc()
@@ -123,6 +130,11 @@ namespace Product.WebApi
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            //var options = new RewriteOptions()
+            //    .AddRedirectToHttps(StatusCodes.Status301MovedPermanently, 44338);
+
+            //app.UseRewriter(options);
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();

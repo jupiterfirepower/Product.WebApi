@@ -36,26 +36,15 @@ namespace Product.WebApi.Services
             return await _userRepository.GetAll().ToListAsync();
         }
 
-        public async Task<IEnumerable<Category>> GetCategories()
-        {
-            return await _uow.Context.Categories
-                .Include(x => x.Children)
-                .AsEnumerable()
-                .Where(x => x.Parent == null)
-                .AsQueryable()
-                .ToListAsync();
-        }
-
-        /*public IEnumerable<CategoryDto> GetCategories()
+        public IEnumerable<Category> GetCategories()
         {
             var categories = _uow.Context.Categories
                 .Include(x => x.Children)
                 .AsEnumerable()
                 .Where(x => x.Parent == null)
                 .ToList();
-
-            return _mapper.Map<IEnumerable<Category>, IList<CategoryDto>>(categories);
-        }*/
+            return categories;
+        }
 
         public async Task<Models.Product> Find(int id)
         {
