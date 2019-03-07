@@ -59,6 +59,8 @@ namespace Product.WebApi
                 options.Filters.Add(new RequireHttpsAttribute());
             });
 
+            
+
             // Add framework services.
             services.AddMvc()
                 .AddCsvSerializerFormatters()
@@ -70,6 +72,16 @@ namespace Product.WebApi
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
                 .AddJsonOptions(a =>
                     a.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver());
+
+            // Add service and create Policy with options
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder.AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials());
+            });
 
             var logFactory = new LoggerFactory();
             logFactory.AddProvider(new SqliteLoggerProvider());
@@ -148,6 +160,7 @@ namespace Product.WebApi
             app.UseResponseCompression();
             app.UseHttpsRedirection();
             app.UseAuthentication();
+            app.UseCors("CorsPolicy");
             app.UseMvc();
         }
     }
